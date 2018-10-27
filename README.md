@@ -15,10 +15,17 @@
   do the trick.  Possibly with some slight modification of the scripts
   necessary.
 
-[1]: https://www.trafiklab.se/api/gtfs-sverige-2
-
 ## Screenshot
 ![Screenshot](meta/screenshot.png "Destination Unknown after selecting a station")
+
+## Links
+  * [Devpost project: Destination Unknown][2]
+  * [Trainhack][3]
+  * [Dataset: GTFS Sweden 2][1]
+
+[1]: https://www.trafiklab.se/api/gtfs-sverige-2
+[2]: https://devpost.com/software/destination-unknown-4idq2j
+[3]: https://trainhack.com
 
 ## Project bootstrap
   This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
