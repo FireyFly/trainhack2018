@@ -125,6 +125,9 @@ class TrainMap extends Component {
       distanceFreqSum += 1;
     });
 
+    // Don't count the originating station
+    distanceFreqSum -= 1;
+
     return (
       <div
         style={{
