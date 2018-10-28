@@ -44,6 +44,7 @@ function parseCSV(data) {
 
 const loadCSV = filename => parseCSV(fs.readFileSync(filename).toString());
 
+/*
 const agencyWhitelist = new Set([
   // Train
   'SJ',
@@ -57,9 +58,18 @@ const agencyWhitelist = new Set([
   'Kustpilen',
   'Krösatågen',
   'Silverlinjen',
+  'Tågkompaniet Norrtåg',
   // Bus
 //'Flixbus',
 //'BT Buss',
+]);
+*/
+
+const agencyBlacklist = new Set([
+  'SL',
+  'Västtrafik',
+  'Skånetrafiken',
+  'Arlanda Express',
 ]);
 
 const agencies = loadCSV('sweden/agency.txt');
@@ -67,10 +77,12 @@ const routes = loadCSV('sweden/routes.txt');
 const trips = loadCSV('sweden/trips.txt');
 const stops = loadCSV('sweden/stops.txt');
 
-const whitelistedAgencyIds = new Set(agencies.filter(({ agencyName }) => agencyWhitelist.has(agencyName)).map(({ agencyId }) => agencyId));
+// const whitelistedAgencyIds = new Set(agencies.filter(({ agencyName }) => agencyWhitelist.has(agencyName)).map(({ agencyId }) => agencyId));
+const blacklistedAgencyIds = new Set(agencies.filter(({ agencyName }) => agencyBlacklist.has(agencyName)).map(({ agencyId }) => agencyId));
 
-function loadFilteredStopTimes(agencyWhitelist) {
-  const routeIds = new Set(routes.filter(({ agencyId }) => whitelistedAgencyIds.has(agencyId)).map(({ routeId }) => routeId));
+function loadFilteredStopTimes() {
+//const routeIds = new Set(routes.filter(({ routeType }) => 100 <= Number(routeType) && Number(routeType) <= 199).map(({ routeId }) => routeId));
+  const routeIds = new Set(routes.filter(({ routeType, agencyId }) => 100 <= Number(routeType) && Number(routeType) <= 199 && !blacklistedAgencyIds.has(agencyId)).map(({ routeId }) => routeId));
   const tripIds = new Set(trips.filter(({ routeId }) => routeIds.has(routeId)).map(({ tripId }) => tripId));
 
   const data = fs.readFileSync('sweden/stop_times.txt').toString();
@@ -83,7 +95,7 @@ function loadFilteredStopTimes(agencyWhitelist) {
   return parseCSV(filteredCSV);
 }
 
-const stopTimes = loadFilteredStopTimes(agencyWhitelist);
+const stopTimes = loadFilteredStopTimes();
 
 console.warn('#agencies', agencies.length);
 console.warn('#routes', routes.length);
@@ -113,7 +125,7 @@ console.warn(freqs);
 */
 
 routes
-  .filter(({ agencyId }) => whitelistedAgencyIds.has(agencyId))
+  .filter(({ agencyId }) => !blacklistedAgencyIds.has(agencyId))
   .filter(({ routeType }) => 100 <= Number(routeType) && Number(routeType) <= 199)
 //.slice(0, 100)
   .forEach((route, i, arr) => {
